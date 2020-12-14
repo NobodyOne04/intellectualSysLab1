@@ -1,0 +1,12 @@
+{
+  "hatchback": 40,
+  "SUV": 10,
+  "crossover": 20,
+  "sedan": 50,
+  "pickup": 12,
+  "minivan": 17,
+  "limousine": 99,
+  "roadster": 72,
+  "cabriolet": 70,
+  "compartment": 77
+}

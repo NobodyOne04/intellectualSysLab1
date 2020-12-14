@@ -1,0 +1,39 @@
+{
+	"body_work": {
+		"hatchback": 0.4,
+		"SUV": 0.1,
+		"crossover": 0.2,
+		"sedan": 0.5,
+		"pickup": 0.12,
+		"minivan": 0.17,
+		"limousine": 0.99,
+		"roadster": 0.72,
+		"cabriolet": 0.7,
+		"compartment": 0.77
+	},
+	"budget": {
+		"Budget": 0.3,
+		"Medium budget": 0.6,
+		"Premium": 0.9
+	},
+	"condition": {
+		"Requires service": 0.3,
+		"Good condition": 0.6,
+		"Factory": 0.9
+	},
+	"gear_box": {
+		"automatic": 0,
+		"manual": 1
+	},
+	"nsumber_of_passengers": {
+		"2 passengers": 0.2,
+		"4 passengers": 0.7,
+		"> 4 passengers": 0.9
+	},
+	"purpose": {
+		"family": 0.1,
+		"urban": 0.2,
+		"sport": 0.5,
+		"commercial": 0.7
+	}
+}
