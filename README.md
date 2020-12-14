@@ -1,2 +1,2 @@
-# intellectualSysLab1
-Lab 1
+# Запуск
+python ./app.py
