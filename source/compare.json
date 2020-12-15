@@ -1,0 +1,118 @@
+{
+  "purpose": {
+    "family": {
+      "nsumber_of_passengers": {
+        "4 passengers": 70,
+        "> 4 passengers": 90
+      },
+      "body_work": {
+        "SUV": 10,
+        "pickup": 12,
+        "minivan": 17,
+        "crossover": 20,
+        "hatchback": 40,
+        "sedan": 50
+      }
+    },
+    "sport": {
+      "body_work": {
+        "SUV": 10,
+        "pickup": 12,
+        "crossover": 20,
+        "hatchback": 40,
+        "sedan": 50,
+        "cabriolet": 70,
+        "roadster": 72,
+        "compartment": 77
+      }
+    }
+  },
+  "nsumber_of_passengers": {
+    "2 passengers": {
+      "body_work": {
+        "cabriolet": 70,
+        "roadster": 72,
+        "compartment": 77
+      },
+      "purpose": {
+        "urban": 20,
+        "sport": 50,
+        "commercial": 70
+      }
+    },
+    "4 passengers": {
+      "body_work": {
+        "SUV": 10,
+        "pickup": 12,
+        "minivan": 17,
+        "crossover": 20,
+        "hatchback": 40,
+        "sedan": 50,
+        "cabriolet": 70
+      }
+    },
+    "> 4 passengers": {
+      "body_work": {
+        "SUV": 10,
+        "minivan": 17,
+        "crossover": 20,
+        "hatchback": 40,
+        "limousine": 99
+      }
+    }
+  },
+  "body_work": {
+      "pickup": {
+        "nsumber_of_passengers": {
+          "2 passengers": 20,
+          "4 passengers": 70
+        },
+        "purpose": {
+          "family": 10,
+          "urban": 20,
+          "commercial": 70
+        }
+      },
+      "cabriolet": {
+        "nsumber_of_passengers": {
+          "2 passengers": 20,
+          "4 passengers": 70
+        },
+        "purpose": {
+          "sport": 50,
+          "urban": 20,
+          "commercial": 70
+        }
+      },
+      "roadster": {
+        "nsumber_of_passengers": {
+          "2 passengers": 20,
+          "4 passengers": 70
+        },
+        "purpose": {
+          "sport": 50,
+          "urban": 20,
+          "commercial": 70
+        }
+      },
+      "compartment": {
+        "nsumber_of_passengers": {
+          "2 passengers": 20
+        },
+        "purpose": {
+          "sport": 50,
+          "urban": 20,
+          "commercial": 70
+        }
+      },
+      "limousine": {
+        "nsumber_of_passengers": {
+          "> 4 passengers": 90
+        },
+        "purpose": {
+          "commercial": 70
+        }
+
+      }
+  }
+}
