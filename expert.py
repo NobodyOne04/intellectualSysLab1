@@ -68,6 +68,5 @@ class ExpertSystem:
 
             for temp_weight in weights_list[inx]:
                 weight *= temp_weight
-
-            result_list.append(f"Car list №{output_str} with weight {weight}")
+            result_list.append(dict(weight=weight, number=output_str))
         return result_list

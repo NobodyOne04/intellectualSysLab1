@@ -11,6 +11,7 @@ class App(tk.Frame):
     def __init__(self, *args, **kwargs):
         self.__expert = ExpertSystem()
         self._listbox_data_dir = pathlib.Path('./list_box_data').resolve()
+        self._responses = pathlib.Path('./responses').resolve()
 
         with open('./source/compare.json', 'r') as file:
             self.__compare = json.load(file)
@@ -133,15 +134,24 @@ class App(tk.Frame):
                 self.__listbox_dict[checkbox_name].curselection()
             )
             value = self.__listbox_match_dict[checkbox_name][value]
-            print(value)
             phasifired_list.append(value)
 
+        output = list()
         expert_output = self._execute(phasifired_list)
-        expert_output = '\n'.join(expert_output)
+        for subset in expert_output:
+            print(subset["number"])
+            if f'{subset["number"]}.json' in os.listdir(self._responses):
+                with open(self._responses / f'{subset["number"]}.json', 'r') as responses:
+                    response = json.load(responses)
+                    response = ';'.join(response)
+                    output.append(f'{response} with {subset["weight"]}')
+            else:
+                output.append(f'car list №{subset["number"]} with {subset["weight"]}')
 
         window = tk.Toplevel(self)
+
         window.wm_title("Подобравнные авто")
-        lable = tk.Label(window, text=expert_output)
+        lable = tk.Label(window, text='\n'.join(output))
         lable.pack(side="top", fill="both", expand=True, padx=100, pady=100)
 
 
