@@ -1,0 +1,8 @@
+{
+  "title": "Какое состояние машины Вас удоволетворит?",
+  "data": {
+    "Requires service": 30,
+    "Good condition": 60,
+    "Factory": 90
+  }
+}

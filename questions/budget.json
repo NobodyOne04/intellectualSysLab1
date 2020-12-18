@@ -1,0 +1,8 @@
+{
+  "title": "Какой у вас бюджет?",
+  "data": {
+    "Budget": 30,
+    "Medium budget": 60,
+    "Premium": 90
+  }
+}

@@ -1,6 +1,6 @@
 import os
 import json
-import pathlib
+from pathlib import Path
 
 import tkinter as tk
 
@@ -10,16 +10,25 @@ from expert import ExpertSystem
 class App(tk.Frame):
     def __init__(self, *args, **kwargs):
         self.__expert = ExpertSystem()
-        self._listbox_data_dir = pathlib.Path('./list_box_data').resolve()
-        self._responses = pathlib.Path('./responses').resolve()
 
-        with open('./source/compare.json', 'r') as file:
+        self.__question_path = Path('questions').resolve()
+        self.__questions = os.listdir(self.__question_path)
+        self.__questions_data = [{}] * len(self.__questions)
+        self.__current_question_inx = 0
+        self.__selected_list = list()
+
+        self.__answers = [0.0] * len(self.__questions)
+
+        self.__responses = Path('responses').resolve()
+
+        with open('./source/compare.json', 'r', encoding='cp1251') as file:
             self.__compare = json.load(file)
 
         self.__listbox_dict = dict()
         self.__listbox_match_dict = dict()
+
         tk.Frame.__init__(self, *args, **kwargs)
-        root.title("ЭС")
+        root.title("ЭКСПЕРТНАЯ СИСТЕМА")
 
         width = 600
         height = 500
@@ -32,116 +41,96 @@ class App(tk.Frame):
         root.geometry(alignstr)
         root.resizable(width=False, height=False)
 
-        GListBox_220 = tk.Listbox(root, exportselection=0)
-        GListBox_220.place(x=100, y=130, width=140, height=30)
-        self.__listbox_dict['body_work'] = GListBox_220
-        self.__listbox_dict['body_work'].bind(
-            "<<ListboxSelect>>",
-            lambda x: self._select_listbox_callback('body_work')
-        )
+        self.__lable = tk.Label(root)
+        self.__lable["text"] = "Это экспертная система, которая поможет Вам выбрать авто"
+        self.__lable.place(x=50, y=30, width=500, height=50)
 
-        GListBox_983 = tk.Listbox(root, exportselection=0)
-        GListBox_983.place(x=350, y=130, width=140, height=30)
-        self.__listbox_dict['budget'] = GListBox_983
-        self.__listbox_dict['budget'].bind(
-            "<<ListboxSelect>>",
-            lambda x: self._select_listbox_callback('budget')
-        )
+        back_btn = tk.Button(root)
+        back_btn["text"] = "Back"
+        back_btn.place(x=100, y=390, width=158, height=35)
+        back_btn["command"] = self.__previous_question
 
-        GListBox_458 = tk.Listbox(root, exportselection=0)
-        GListBox_458.place(x=100, y=210, width=140, height=30)
-        self.__listbox_dict['condition'] = GListBox_458
-        self.__listbox_dict['condition'].bind(
-            "<<ListboxSelect>>",
-            lambda x: self._select_listbox_callback('condition')
-        )
+        self.__next_btn = tk.Button(root)
+        self.__next_btn["text"] = "Next"
+        self.__next_btn.place(x=300, y=390, width=158, height=35)
+        self.__next_btn["command"] = self.__next_question
 
-        GListBox_624 = tk.Listbox(root, exportselection=0)
-        GListBox_624.place(x=350, y=210, width=140, height=30)
-        self.__listbox_dict['gear_box'] = GListBox_624
-        self.__listbox_dict['gear_box'].bind(
-            "<<ListboxSelect>>",
-            lambda x: self._select_listbox_callback('gear_box')
-        )
+        self.__listbox = tk.Listbox(root)
+        self.__listbox.place(x=220, y=100, width=180, height=215)
+        self.__listbox["exportselection"] = "0"
+        self.__listbox["selectmode"] = "single"
+        self.__listbox.place_forget()
 
-        GListBox_62 = tk.Listbox(root, exportselection=0)
-        GListBox_62.place(x=100, y=290, width=140, height=30)
-        self.__listbox_dict['nsumber_of_passengers'] = GListBox_62
-        self.__listbox_dict['nsumber_of_passengers'].bind(
-            "<<ListboxSelect>>",
-            lambda x: self._select_listbox_callback('nsumber_of_passengers')
-        )
+    def __next_question(self):
+        new_listbox_data = dict()
+        is_selected = bool(self.__current_question_inx != 0)
 
-        GListBox_57 = tk.Listbox(root, exportselection=0)
-        GListBox_57.place(x=350, y=290, width=140, height=30)
-        self.__listbox_dict['purpose'] = GListBox_57
-        self.__listbox_dict['purpose'].bind(
-            "<<ListboxSelect>>",
-            lambda x: self._select_listbox_callback('purpose')
-        )
+        if not self.__listbox.curselection() and 0 != self.__current_question_inx:
+            return
 
-        GLabel_234 = tk.Label(root)
-        GLabel_234["text"] = "Выбери нужные параметры"
-        GLabel_234.place(x=200, y=30, width=180, height=30)
+        if is_selected:
+            cursor = self.__listbox.get(self.__listbox.curselection())
+            self.__selected_list.append(cursor)
+            answer = self.__questions_data[self.__current_question_inx - 1][cursor]
+            self.__answers[self.__current_question_inx - 1] = answer
+            if len(self.__questions) > self.__current_question_inx:
+                name = self.__questions[self.__current_question_inx].split('.')[0]
+                for selected in self.__selected_list:
+                    if selected in self.__compare and name in self.__compare[selected]:
+                        new_listbox_data = self.__compare[selected][name]
 
-        GButton_351 = tk.Button(root)
-        GButton_351["text"] = "Подобрать"
-        GButton_351.place(x=200, y=390, width=158, height=35)
-        GButton_351["command"] = self.button_click_command
-        self._append_listbox_data()
+        if len(self.__questions) <= self.__current_question_inx:
+            self.__listbox.place_forget()
+            self.__lable['text'] = "Спасибо за то что используете нашу программу!"
+            self.__next_btn["text"] = 'Exit'
+            self.__show_result()
+            self.__next_btn["command"] = exit
+            return
 
-    def _append_listbox_data(self):
-        for file_name in os.listdir(self._listbox_data_dir):
-            with open(self._listbox_data_dir / file_name) as file:
-                listbox_dict = json.load(file)
-                _file = self._listbox_data_dir / file_name
-                self.__listbox_match_dict[_file.stem] = listbox_dict
-                for name, value in listbox_dict.items():
-                    self.__listbox_dict[_file.stem].insert(value, name)
+        self.__answers[self.__current_question_inx] = self.__listbox.curselection()
 
-    def _execute(self, phasifired_list: list) -> list:
-        fuzzy_logical_list = self.__expert.fuzzy_logical_output(phasifired_list)
+        self.__listbox.delete(0, tk.END)
+
+        with open(self.__question_path / self.__questions[self.__current_question_inx], 'r', encoding='utf-8') as file:
+            question_data = json.load(file)
+
+        self.__lable['text'] = question_data['title']
+
+        if not new_listbox_data:
+            new_listbox_data = question_data['data']
+
+        self.__questions_data[self.__current_question_inx] = new_listbox_data
+
+        for key, value in new_listbox_data.items():
+            self.__listbox.insert(value, key)
+
+        self.__listbox.place(x=220, y=100, width=180, height=215)
+        self.__current_question_inx += 1
+
+    def __previous_question(self):
+        if 1 == self.__current_question_inx:
+            return
+
+        self.__listbox.delete(0, tk.END)
+
+        self.__current_question_inx -= 1
+
+        for key, value in self.__questions_data[self.__current_question_inx - 1].items():
+            self.__listbox.insert(value, key)
+
+    def __call_expert(self) -> list:
+        fuzzy_logical_list = self.__expert.fuzzy_logical_output(self.__answers)
         aggregate_list = self.__expert.aggregate(fuzzy_logical_list)
         result = self.__expert.dephasifier(aggregate_list)
         return result
 
-    def _select_listbox_callback(self, name):
-        box = self.__listbox_dict[name]
-
-        selected = box.get(
-            box.curselection()
-        )
-
-        if name not in self.__compare:
-            return
-
-        if selected not in self.__compare[name]:
-            return
-
-        for listbox_name, values_dict in self.__compare[name][selected].items():
-            selected_temp = self.__listbox_dict[listbox_name].curselection()
-            self.__listbox_dict[listbox_name].delete(0, tk.END)
-            for key, value in values_dict.items():
-                self.__listbox_dict[listbox_name].insert(value, key)
-            if selected_temp:
-                self.__listbox_dict[listbox_name].selection_set(*selected_temp)
-
-    def button_click_command(self):
-        phasifired_list = list()
-        for checkbox_name in self.__listbox_dict.keys():
-
-            value = self.__listbox_dict[checkbox_name].get(
-                self.__listbox_dict[checkbox_name].curselection()
-            )
-            value = self.__listbox_match_dict[checkbox_name][value]
-            phasifired_list.append(value)
-
+    def __show_result(self):
         output = list()
-        expert_output = self._execute(phasifired_list)
+        expert_output = self.__call_expert()
+
         for subset in expert_output:
-            print(subset["number"])
-            if f'{subset["number"]}.json' in os.listdir(self._responses):
-                with open(self._responses / f'{subset["number"]}.json', 'r') as responses:
+            if f'{subset["number"]}.json' in os.listdir(self.__responses):
+                with open(self.__responses / f'{subset["number"]}.json', 'r') as responses:
                     response = json.load(responses)
                     response = ';'.join(response)
                     output.append(f'{response} with {subset["weight"]}')
