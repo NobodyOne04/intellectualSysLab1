@@ -1,0 +1,24 @@
+# 0002. Fuzzy inference over a JSON knowledge base
+
+- Status: Accepted
+- Date: 2026-11-19
+
+The expert system keeps all knowledge (questions, membership values, answers) in JSON files and
+runs a small fuzzy pipeline in code, so the knowledge can be changed without touching the logic.
+
+## Technical details
+- **Input**: eight questions (`questions/*.json`, each `{"title", "data": {answer: score}}`)
+  shown one at a time in Tk; answers become scores 0-100.
+- **Fuzzification and rules** (`expert.py`): for each criterion, `apply_rule_base` picks the
+  `_ITERATIONS = 2` membership values from `source/convertion.json` closest to the answer.
+- **Aggregation**: mean of the picked values per criterion.
+- **Defuzzification**: again the two closest options per criterion; their indexes form a
+  code string (e.g. `11501212`) and `1 - distance` the weights; the product of weights ranks
+  the two candidate codes.
+- **Answer**: `responses/<code>.json` lists matching cars (e.g. Kia Rio 2016, Skoda Rapid
+  2016); codes without a file give no result.
+
+## Technologies and alternatives
+- Involved: Python 3 standard library (`json`, `tkinter`, `pathlib`).
+- Alternatives: scikit-fuzzy (a dependency for a few lines); rules hard-coded in Python
+  (knowledge mixed with logic).
